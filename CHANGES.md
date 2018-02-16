@@ -4,11 +4,79 @@ Notable changes between versions.
 
 ## Latest
 
+## v1.9.3
+
+* Kubernetes [v1.9.3](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.9.md#v193)
+* Network improvements and fixes ([#104](https://github.com/poseidon/typhoon/pull/104))
+  * Switch from Calico v2.6.6 to v3.0.2
+  * Add Calico GlobalNetworkSet CRD
+  * Update flannel from v0.9.0 to v0.10.0
+  * Use separate service account for flannel
+* Update etcd from v3.2.14 to v3.2.15
+
+#### Addons
+
+* Update Prometheus from v2.0.0 to v2.1.0 ([#113](https://github.com/poseidon/typhoon/pull/113))
+  * Improve alerting rules
+  * Relabel discovered kubelet, endpoint, service, and apiserver scrapes
+  * Use separate service accounts
+  * Update node-exporter and kube-state-metrics
+* Include Grafana dashboards for Kubernetes admins ([#113](https://github.com/poseidon/typhoon/pull/113))
+  * Add grafana-watcher to load bundled upstream dashboards
+* Update nginx-ingress from 0.9.0 to 0.10.2
+* Update CLUO from v0.5.0 to v0.6.0
+* Switch manifests to use `apps/v1` Deployments and Daemonsets ([#120](https://github.com/poseidon/typhoon/pull/120))
+* Remove Kubernetes Dashboard manifests ([#121](https://github.com/poseidon/typhoon/pull/121))
+
+#### Digital Ocean
+
+* Use new Droplet [types](https://developers.digitalocean.com/documentation/changelog/api-v2/new-size-slugs-for-droplet-plan-changes/) which offer more CPU/memory, at lower cost. ([#105](https://github.com/poseidon/typhoon/pull/105))
+  * A small Digital Ocean cluster costs less than $25 a month!
+
+## v1.9.2
+
+* Kubernetes [v1.9.2](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.9.md#v192)
+* Add Terraform v0.11.x support
+  * Add explicit "providers" section to modules for Terraform v0.11.x
+  * Retain support for Terraform v0.10.4+
+* Add [migration guide](https://github.com/poseidon/typhoon/blob/master/docs/topics/maintenance.md) from Terraform v0.10.x to v0.11.x (**action required!**)
+* Update etcd from 3.2.13 to 3.2.14
+* Update calico from 2.6.5 to 2.6.6
+* Update kube-dns from v1.14.7 to v1.14.8
+* Use separate service account for kube-dns
+* Use kubernetes-incubator/bootkube v0.10.0
+
+#### Addons
+
+* Update CLUO to v0.5.0 to fix compatibility with Kubernetes 1.9 (**important**)
+  * Earlier versions can't roll out Container Linux updates on Kubernetes 1.9 nodes ([cluo#163](https://github.com/coreos/container-linux-update-operator/issues/163))
+* Update kube-state-metrics from v1.1.0 to v1.2.0
+* Fix RBAC cluster role for kube-state-metrics
+
+#### Bare-Metal
+
+* Use per-node Container Linux install profiles ([#97](https://github.com/poseidon/typhoon/pull/97))
+  * Allow Container Linux channel/version to be chosen per-cluster
+  * Fix issue where cluster deletion could require `terraform apply` multiple times
+
+#### Digital Ocean
+
+* Relax `digitalocean` provider version constraint
+* Fix bug with `terraform plan` always showing a firewall diff to be applied ([#3](https://github.com/poseidon/typhoon/issues/3))
+
+## v1.9.1
+
 * Kubernetes [v1.9.1](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.9.md#v191)
+* Update kube-dns from 1.14.5 to v1.14.7
+* Update etcd from 3.2.0 to 3.2.13
+* Update Calico from v2.6.4 to v2.6.5
+* Enable portmap to fix hostPort with Calico
+* Use separate service account for controller-manager
 
 ## v1.8.6
 
 * Kubernetes [v1.8.6](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.8.md#v186)
+* Update Calico from v2.6.3 to v2.6.4
 
 ## v1.8.5
 

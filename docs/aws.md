@@ -1,6 +1,6 @@
 # AWS
 
-In this tutorial, we'll create a Kubernetes v1.9.1 cluster on AWS.
+In this tutorial, we'll create a Kubernetes v1.9.3 cluster on AWS.
 
 We'll declare a Kubernetes cluster in Terraform using the Typhoon Terraform module. On apply, a VPC, gateway, subnets, auto-scaling groups of controllers and workers, network load balancers for controllers and workers, and security groups will be created.
 
@@ -10,15 +10,15 @@ Controllers and workers are provisioned to run a `kubelet`. A one-time [bootkube
 
 * AWS Account and IAM credentials
 * AWS Route53 DNS Zone (registered Domain Name or delegated subdomain)
-* Terraform v0.10.x and [terraform-provider-ct](https://github.com/coreos/terraform-provider-ct) installed locally
+* Terraform v0.11.x and [terraform-provider-ct](https://github.com/coreos/terraform-provider-ct) installed locally
 
 ## Terraform Setup
 
-Install [Terraform](https://www.terraform.io/downloads.html) v0.10.x on your system.
+Install [Terraform](https://www.terraform.io/downloads.html) v0.11.x on your system.
 
 ```sh
 $ terraform version
-Terraform v0.10.7
+Terraform v0.11.1
 ```
 
 Add the [terraform-provider-ct](https://github.com/coreos/terraform-provider-ct) plugin binary for your system.
@@ -57,8 +57,31 @@ Configure the AWS provider to use your access key credentials in a `providers.tf
 
 ```tf
 provider "aws" {
+  version = "~> 1.5.0"
+  alias   = "default"
+
   region                  = "eu-central-1"
   shared_credentials_file = "/home/user/.config/aws/credentials"
+}
+
+provider "local" {
+  version = "~> 1.0"
+  alias = "default"
+}
+
+provider "null" {
+  version = "~> 1.0"
+  alias = "default"
+}
+
+provider "template" {
+  version = "~> 1.0"
+  alias = "default"
+}
+
+provider "tls" {
+  version = "~> 1.0"
+  alias = "default"
 }
 ```
 
@@ -73,8 +96,16 @@ Define a Kubernetes cluster using the module `aws/container-linux/kubernetes`.
 
 ```tf
 module "aws-tempest" {
-  source = "git::https://github.com/poseidon/typhoon//aws/container-linux/kubernetes"
+  source = "git::https://github.com/poseidon/typhoon//aws/container-linux/kubernetes?ref=v1.9.3"
 
+  providers = {
+    aws = "aws.default"
+    local = "local.default"
+    null = "null.default"
+    template = "template.default"
+    tls = "tls.default"
+  }
+  
   cluster_name = "tempest"
 
   # AWS
@@ -119,7 +150,7 @@ Get or update Terraform modules.
 $ terraform get            # downloads missing modules
 $ terraform get --update   # updates all modules
 Get: git::https://github.com/poseidon/typhoon (update)
-Get: git::https://github.com/poseidon/bootkube-terraform.git?ref=v0.9.1 (update)
+Get: git::https://github.com/poseidon/bootkube-terraform.git?ref=v0.10.0 (update)
 ```
 
 Plan the resources to be created.
@@ -151,9 +182,9 @@ In 4-8 minutes, the Kubernetes cluster will be ready.
 $ export KUBECONFIG=/home/user/.secrets/clusters/tempest/auth/kubeconfig
 $ kubectl get nodes
 NAME             STATUS    AGE       VERSION        
-ip-10-0-12-221   Ready     34m       v1.9.1
-ip-10-0-19-112   Ready     34m       v1.9.1
-ip-10-0-4-22     Ready     34m       v1.9.1
+ip-10-0-12-221   Ready     34m       v1.9.3
+ip-10-0-19-112   Ready     34m       v1.9.3
+ip-10-0-4-22     Ready     34m       v1.9.3
 ```
 
 List the pods.
@@ -179,7 +210,7 @@ kube-system   pod-checkpointer-4kxtl-ip-10-0-12-221     1/1    Running   0      
 
 ## Going Further
 
-Learn about [version pinning](concepts.md#versioning), maintenance, and [addons](addons/overview.md).
+Learn about [version pinning](concepts.md#versioning), [maintenance](topics/maintenance.md), and [addons](addons/overview.md).
 
 !!! note
     On Container Linux clusters, install the `container-linux-update-operator` addon to coordinate reboots and drains when nodes auto-update. Otherwise, updates may not be applied until the next reboot.
